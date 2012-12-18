@@ -133,7 +133,8 @@ class AuthorizationProvider
         $post_body = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><password><value>{$password}</value></password>";
 
         // query the server
-        $browser = new \Buzz\Browser();
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
         $response = $browser->post($url, $headers, $post_body);
         if ($response->getStatusCode() == 200)
         { // successful
@@ -179,8 +180,13 @@ class AuthorizationProvider
 </authentication-context>";
 
         // query the server
-        $browser = new \Buzz\Browser();
+        
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
+
+        // patch here
         $response = $browser->post($url, $headers, $post_body);
+
         if ($response->getStatusCode() == 201)
         { // successful
             $resource = $response->getHeader('Location');
@@ -198,13 +204,16 @@ class AuthorizationProvider
         { // unsuccessful
             if ($response->getStatusCode() == 400)
             {
-                @$xmlObject = simplexml_load_string($response->getContent());
+                $xmlObject = simplexml_load_string($response->getContent());
                 if (false === $xmlObject)
                 { // test if the content is a valid xml
                     throw new \Exception('Content from server is not a valid XML. ' . $response);
                 }
                 $this->throwReasonException($xmlObject->reason, $xmlObject->message);
             }
+
+            // patch here
+            throw new \Exception($response->getStatusCode() .':'. $response->getReasonPhrase());
         }
 
     }
@@ -220,7 +229,8 @@ class AuthorizationProvider
         $headers = $this->getCommonHeaders();
 
         // query the server
-        $browser = new \Buzz\Browser();
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
         $response = $browser->get($url, $headers);
         if ($response->getStatusCode() == 200)
         { // successful
@@ -274,7 +284,8 @@ class AuthorizationProvider
   </validation-factors>";
 
         // query the server
-        $browser = new \Buzz\Browser();
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
         $response = $browser->post($url, $headers, $post_body);
         if ($response->getStatusCode() == 200)
         { // successful
@@ -317,7 +328,8 @@ class AuthorizationProvider
         $headers = $this->getCommonHeaders();
 
         // query the server
-        $browser = new \Buzz\Browser();
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
         $response = $browser->delete($url, $headers);
         if ($response->getStatusCode() == 204)
         { // successful
@@ -341,7 +353,8 @@ class AuthorizationProvider
         $headers = $this->getCommonHeaders();
 
         // query the server
-        $browser = new \Buzz\Browser();
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
         $response = $browser->get($url, $headers);
         if ($response->getStatusCode() == 200)
         { // successful
@@ -403,7 +416,8 @@ class AuthorizationProvider
         $headers = $this->getCommonHeaders();
 
         // query the server
-        $browser = new \Buzz\Browser();
+        $client = new \Buzz\Client\Curl();
+        $browser = new \Buzz\Browser($client);
         $response = $browser->get($url, $headers);
         if ($response->getStatusCode() == 200)
         { // successful
