@@ -252,7 +252,8 @@ class AuthorizationProvider
                 { // test if the content is a valid xml
                     throw new \Exception('Content from server is not a valid XML. ' . $response);
                 }
-                throw new \Exception($xmlObject->message);
+                // throw new \Exception($xmlObject->message);
+                $this->throwReasonException($xmlObject->reason, $xmlObject->message);
             }
         }
     }
